@@ -1,0 +1,250 @@
+{
+  "entities": {
+    "PortfolioItem": {
+      "title": "PortfolioItem",
+      "description": "Um item de portfólio de design da LNS Creative Design",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID único do item"
+        },
+        "title": {
+          "type": "string",
+          "description": "Título do projeto"
+        },
+        "category": {
+          "type": "string",
+          "description": "Categoria do projeto"
+        },
+        "description": {
+          "type": "string",
+          "description": "Descrição detalhada do projeto"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL da imagem representativa"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags associadas"
+        }
+      },
+      "required": ["id", "title", "category", "description", "imageUrl"]
+    },
+    "BudgetRequest": {
+      "title": "BudgetRequest",
+      "description": "Uma solicitação de orçamento/cotação de cliente",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID único do orçamento"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nome do cliente"
+        },
+        "projectType": {
+          "type": "string",
+          "description": "Tipo de projeto pretendido"
+        },
+        "budget": {
+          "type": "number",
+          "description": "Orçamento estimado"
+        },
+        "contactType": {
+          "type": "string",
+          "description": "Meio de contacto preferencial"
+        },
+        "contactVal": {
+          "type": "string",
+          "description": "Contacto do cliente"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detalhes das ideias"
+        },
+        "date": {
+          "type": "string",
+          "description": "Data de solicitação"
+        },
+        "budgetNumber": {
+          "type": "string",
+          "description": "Código de controle"
+        },
+        "status": {
+          "type": "string",
+          "description": "Estado do orçamento"
+        },
+        "userId": {
+          "type": "string",
+          "description": "ID do utilizador proprietário"
+        },
+        "lastStatusUpdate": {
+          "type": "string",
+          "description": "Data da última alteração de estado"
+        },
+        "needsInvoice": {
+          "type": "boolean",
+          "description": "Se necessita de fatura"
+        },
+        "nif": {
+          "type": "string",
+          "description": "NIF do cliente"
+        },
+        "razaoSocial": {
+          "type": "string",
+          "description": "Razão social para fatura"
+        },
+        "enderecoFiscal": {
+          "type": "string",
+          "description": "Endereço fiscal"
+        },
+        "paymentStatus": {
+          "type": "string",
+          "description": "Estado do pagamento"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "Método de pagamento"
+        },
+        "preferredStartDate": {
+          "type": "string",
+          "description": "Data preferencial para início do projeto"
+        },
+        "reminderScheduled": {
+          "type": "boolean",
+          "description": "Se o lembrete foi agendado"
+        },
+        "reminderDaysBefore": {
+          "type": "number",
+          "description": "Dias de antecedência para lembrete"
+        },
+        "reminderDate": {
+          "type": "string",
+          "description": "Data agendada para lembrete"
+        }
+      },
+      "required": ["id", "name", "projectType", "budget", "contactType", "contactVal", "description", "date", "budgetNumber", "status"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Um perfil de utilizador/cliente cadastrado com 100% de segurança no site",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "UID de autenticação do utilizador"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nome completo do utilizador"
+        },
+        "email": {
+          "type": "string",
+          "description": "Gmail da Google"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Data de cadastro do utilizador"
+        }
+      },
+      "required": ["id", "name", "email", "createdAt"]
+    },
+    "Client": {
+      "title": "Client",
+      "description": "Um perfil de cliente registrado para portfólios e biometria",
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "description": "Número de telefone único do cliente"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nome do cliente"
+        },
+        "pin": {
+          "type": "string",
+          "description": "PIN numérico de 4 dígitos para acesso"
+        },
+        "biometricEnabled": {
+          "type": "boolean",
+          "description": "Status se a biometria está ativa"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Data de criação do perfil"
+        }
+      },
+      "required": ["phone", "name", "pin", "biometricEnabled"]
+    },
+    "CommentItem": {
+      "title": "CommentItem",
+      "description": "Depoimento ou avaliação deixado por um cliente no site",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID único do comentário"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nome do autor ou empresa"
+        },
+        "projectType": {
+          "type": "string",
+          "description": "Tipo de projeto de design"
+        },
+        "rating": {
+          "type": "number",
+          "description": "Classificação de 1 a 5 estrelas"
+        },
+        "content": {
+          "type": "string",
+          "description": "Texto do comentário/feedback"
+        },
+        "date": {
+          "type": "string",
+          "description": "Data de publicação YYYY-MM-DD"
+        },
+        "likes": {
+          "type": "number",
+          "description": "Número de votos úteis/curtidas"
+        },
+        "verifiedClient": {
+          "type": "boolean",
+          "description": "Se é um cliente verificado"
+        },
+        "avatarUrl": {
+          "type": "string",
+          "description": "URL opcional do avatar do cliente"
+        }
+      },
+      "required": ["id", "name", "projectType", "rating", "content", "date", "likes", "verifiedClient"]
+    }
+  },
+  "firestore": {
+    "portfolio": {
+      "schema": "PortfolioItem",
+      "description": "Coleção de itens de portfólio visíveis para o público e editáveis pela Lectícia"
+    },
+    "budgets": {
+      "schema": "BudgetRequest",
+      "description": "Coleção de solicitações de orçamento criadas pelos clientes e lidas/geridas pela Lectícia"
+    },
+    "users": {
+      "schema": "User",
+      "description": "Coleção de perfis de utilizador cadastrados com segurança no site"
+    },
+    "clients": {
+      "schema": "Client",
+      "description": "Coleção de clientes registrados com suporte a PIN e biometria"
+    },
+    "comments": {
+      "schema": "CommentItem",
+      "description": "Coleção de avaliações e comentários de clientes"
+    }
+  }
+}

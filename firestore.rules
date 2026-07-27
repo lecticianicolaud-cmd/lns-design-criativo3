@@ -1,0 +1,156 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net (default-deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'lecticianicolaud@gmail.com';
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation for PortfolioItem
+    function isValidPortfolioItem(data) {
+      return data.keys().hasAll(['id', 'title', 'category', 'imageUrl', 'description', 'selected', 'date'])
+        && data.keys().size() <= 8
+        && data.id is string && data.id.size() <= 128
+        && data.title is string && data.title.size() <= 200
+        && data.category is string && data.category.size() <= 100
+        && data.imageUrl is string && data.imageUrl.size() <= 1000
+        && data.description is string && data.description.size() <= 2000
+        && data.selected is bool
+        && data.date is string && data.date.size() <= 50
+        && (!data.keys().hasAny(['tags']) || (data.tags is list && data.tags.size() <= 20));
+    }
+
+    // Validation for BudgetRequest
+    function isValidBudgetRequest(data) {
+      return data.keys().hasAll(['id', 'name', 'projectType', 'budget', 'contactType', 'contactVal', 'description', 'date', 'budgetNumber', 'status'])
+        && data.keys().size() <= 25
+        && data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() <= 150
+        && data.projectType is string && data.projectType.size() <= 100
+        && (data.budget is int || data.budget is float) && data.budget >= 0 && data.budget <= 100000000
+        && data.contactType is string && data.contactType.size() <= 50
+        && data.contactVal is string && data.contactVal.size() <= 200
+        && data.description is string && data.description.size() <= 3000
+        && data.date is string && data.date.size() <= 50
+        && data.budgetNumber is string && data.budgetNumber.size() <= 50
+        && data.status is string && data.status.size() <= 50
+        && (!data.keys().hasAny(['userId']) || (data.userId is string && data.userId.size() <= 128))
+        && (!data.keys().hasAny(['lastStatusUpdate']) || (data.lastStatusUpdate is string && data.lastStatusUpdate.size() <= 100))
+        && (!data.keys().hasAny(['needsInvoice']) || (data.needsInvoice is bool))
+        && (!data.keys().hasAny(['nif']) || (data.nif is string && data.nif.size() <= 100))
+        && (!data.keys().hasAny(['razaoSocial']) || (data.razaoSocial is string && data.razaoSocial.size() <= 200))
+        && (!data.keys().hasAny(['enderecoFiscal']) || (data.enderecoFiscal is string && data.enderecoFiscal.size() <= 300))
+        && (!data.keys().hasAny(['paymentStatus']) || (data.paymentStatus is string && data.paymentStatus.size() <= 50))
+        && (!data.keys().hasAny(['paymentMethod']) || (data.paymentMethod is string && data.paymentMethod.size() <= 100))
+        && (!data.keys().hasAny(['preferredStartDate']) || (data.preferredStartDate is string && data.preferredStartDate.size() <= 50))
+        && (!data.keys().hasAny(['reminderScheduled']) || (data.reminderScheduled is bool))
+        && (!data.keys().hasAny(['reminderDaysBefore']) || (data.reminderDaysBefore is int || data.reminderDaysBefore is float))
+        && (!data.keys().hasAny(['reminderDate']) || (data.reminderDate is string && data.reminderDate.size() <= 100));
+    }
+
+    // Validation for User
+    function isValidUser(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'createdAt'])
+        && data.keys().size() == 4
+        && data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() <= 150
+        && data.email is string && data.email.size() <= 150
+        && data.createdAt is string && data.createdAt.size() <= 50;
+    }
+
+    // Validation for Client
+    function isValidClient(data) {
+      return data.keys().hasAll(['phone', 'name', 'pin', 'biometricEnabled', 'createdAt'])
+        && data.keys().size() == 5
+        && data.phone is string && data.phone.size() <= 40
+        && data.name is string && data.name.size() <= 150
+        && data.pin is string && data.pin.size() == 4
+        && data.biometricEnabled is bool
+        && data.createdAt is string && data.createdAt.size() <= 50;
+    }
+
+    // Validation for CommentItem
+    function isValidCommentItem(data) {
+      return data.keys().hasAll(['id', 'name', 'projectType', 'rating', 'content', 'date', 'likes', 'verifiedClient'])
+        && data.keys().size() <= 9
+        && data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() <= 150
+        && data.projectType is string && data.projectType.size() <= 150
+        && (data.rating is int || data.rating is float) && data.rating >= 1 && data.rating <= 5
+        && data.content is string && data.content.size() <= 3000
+        && data.date is string && data.date.size() <= 50
+        && (data.likes is int || data.likes is float) && data.likes >= 0
+        && data.verifiedClient is bool
+        && (!data.keys().hasAny(['avatarUrl']) || (data.avatarUrl is string && data.avatarUrl.size() <= 1000));
+    }
+
+
+    // Portfolio collection
+    match /portfolio/{itemId} {
+      allow read: if true; // Public read
+      allow create, update: if isValidId(itemId) && isValidPortfolioItem(incoming());
+      allow delete: if isValidId(itemId);
+    }
+
+    // Budgets/Quotations collection
+    match /budgets/{budgetId} {
+      allow create: if isValidId(budgetId) && isValidBudgetRequest(incoming());
+      allow get, delete: if isValidId(budgetId);
+      allow list: if true;
+      allow update: if isValidId(budgetId) && isValidBudgetRequest(incoming());
+    }
+
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read, create, update: if true;
+      allow delete: if true;
+    }
+
+    // About Me collection
+    match /about_me/{docId} {
+      allow read, write: if true;
+    }
+
+    // Clients collection for biometric and PIN-based portfolios
+    match /clients/{phone} {
+      allow read, create, update, delete: if true;
+    }
+
+    // Comments & Reviews collection
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create, update: if isValidId(commentId) && isValidCommentItem(incoming());
+      allow delete: if true;
+    }
+  }
+}

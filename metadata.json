@@ -1,0 +1,8 @@
+{
+  "name": "LNS Creative Design",
+  "description": "Portfólio profissional e plataforma interativa de orçamentos para LNS Creative Design por Lectícia Nicolau da Silva.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
